@@ -12,14 +12,8 @@ class UserRepository
     {
     }
 
-    public function getAllUsers(string $filter = ''): LengthAwarePaginator
+    public function getPaginate(int $totalPerPage = 15, int $page = 1, string $filter = ''): LengthAwarePaginator
     {
-        return $this->user->where(
-            function ($query) use ($filter) {
-                if ($filter !== '') {
-                    $query->where('name', 'LIKE', "%{$filter}%");
-                }
-            }
-        )->paginate();
+        return $this->user->where('name', 'LIKE', "%{$filter}%")->paginate($totalPerPage, ['*'], 'page', $page);
     }
 }
