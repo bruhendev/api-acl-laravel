@@ -30,6 +30,12 @@ class UserRepository
         return $this->user->query()->find($id);
     }
 
+    public function findByEmail(string $email): ?User
+    {
+        return $this->user->query()->where('email', $email)->first();
+        
+    }
+
     public function update(EditUserDTO $dto): bool
     {
         if (!$user = $this->findById($dto->id)) {
