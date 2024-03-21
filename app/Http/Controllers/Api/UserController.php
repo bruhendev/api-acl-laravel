@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\DTO\Users\CreateUserDTO;
+use App\DTO\Users\EditUserDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreUserRequest;
+use App\Http\Requests\Api\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -45,7 +47,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        if (!$user = $this->userRepository->findById($id)){
+        if (!$user = $this->userRepository->findById($id)) {
             return response()->json(['message' => 'user not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -55,9 +57,14 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, string $id)
     {
-        //
+        $response = $this->userRepository->update(new EditUserDTO(...['id' => $id, ...$request->validated()]));
+        if (!$response) {
+            return response()->json(['message' => 'user not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->json(['message' => 'user updated with success']);
     }
 
     /**
@@ -65,6 +72,10 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if (!$this->userRepository->delete($id)) {
+            return response()->json(['message' => 'user not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        return response()->json([], Response::HTTP_NO_CONTENT);
     }
 }
