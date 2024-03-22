@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\AuthApiRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +37,8 @@ class AuthApiController extends Controller
 
     public function me()
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
+        $user->load('permissions');
         return new UserResource($user);
     }
 

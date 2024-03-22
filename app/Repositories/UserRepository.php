@@ -16,7 +16,10 @@ class UserRepository
 
     public function getPaginate(int $totalPerPage = 15, int $page = 1, string $filter = ''): LengthAwarePaginator
     {
-        return $this->user->query()->where('name', 'LIKE', "%{$filter}%")->paginate($totalPerPage, ['*'], 'page', $page);
+        return $this->user->query()
+            ->where('name', 'LIKE', "%{$filter}%")
+            // ->with(['permissions'])
+            ->paginate($totalPerPage, ['*'], 'page', $page);
     }
 
     public function createNew(CreateUserDTO $dto): User
@@ -34,7 +37,6 @@ class UserRepository
     public function findByEmail(string $email): ?User
     {
         return $this->user->query()->where('email', $email)->first();
-        
     }
 
     public function update(EditUserDTO $dto): bool
@@ -69,5 +71,10 @@ class UserRepository
 
         $user->permissions()->sync($permissions);
         return true;
+    }
+
+    public function getPermissionsByUserId(string $user)
+    {
+        return $this->findById($user)->permissions()->get();
     }
 }
