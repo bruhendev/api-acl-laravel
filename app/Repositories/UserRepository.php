@@ -18,7 +18,7 @@ class UserRepository
     {
         return $this->user->query()
             ->where('name', 'LIKE', "%{$filter}%")
-            // ->with(['permissions'])
+            ->with(['permissions'])
             ->paginate($totalPerPage, ['*'], 'page', $page);
     }
 
@@ -76,5 +76,14 @@ class UserRepository
     public function getPermissionsByUserId(string $user)
     {
         return $this->findById($user)->permissions()->get();
+    }
+
+    public function hasPermissions(User $user, string $permissionName): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        return $user->permissions()->where('name', $permissionName)->exists();
     }
 }

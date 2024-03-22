@@ -21,7 +21,7 @@ Route::post('/me', [AuthApiController::class, 'me'])->name('auth.me')->middlewar
 Route::post('/logout', [AuthApiController::class, 'logout'])->name('auth.logout')->middleware('auth:sanctum');
 Route::post('/auth', [AuthApiController::class, 'auth'])->name('auth.login');
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'acl'])->group(function () {
     
     Route::apiResource('/permissions', PermissionController::class);
     
