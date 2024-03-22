@@ -6,6 +6,7 @@ use App\DTO\Users\CreateUserDTO;
 use App\DTO\Users\EditUserDTO;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 
 class UserRepository
 {
@@ -58,5 +59,15 @@ class UserRepository
             return false;
         }
         return $user->delete();
+    }
+
+    public function syncPermisions(string $id, array $permissions): ?bool
+    {
+        if (!$user = $this->findById($id)) {
+            return null;
+        }
+
+        $user->permissions()->sync($permissions);
+        return true;
     }
 }
